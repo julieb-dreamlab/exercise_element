@@ -1,0 +1,6 @@
+{
+  "appTitle": "exercise_element",
+  "@appTitle": {
+    "description": "The title of the application"
+  }
+}
