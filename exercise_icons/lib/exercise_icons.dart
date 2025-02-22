@@ -1,9 +1,15 @@
-library exercise_icons;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 const int maxExerciseID = 3;
+
+/// A widget that displays image1.png.
+class Image0 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset('packages/exercise_icons/assets/images/ExerciseIcon0.png');
+  }
+}
 
 /// A widget that displays image1.png.
 class Image1 extends StatelessWidget {
@@ -12,7 +18,6 @@ class Image1 extends StatelessWidget {
     return Image.asset('packages/exercise_icons/assets/images/ExerciseIcon1.png');
   }
 }
-
 /// A widget that displays image2.jpg.
 class Image2 extends StatelessWidget {
   @override
@@ -30,18 +35,18 @@ class Image3 extends StatelessWidget {
 }
 
 /// A panel with the exercise components: icon, desc, demo
-class Exercise_Icon extends StatelessWidget {
+class ExerciseIcon extends StatelessWidget {
   final int id;
 
-  Exercise_Icon({super.key, required this.id});
+  ExerciseIcon({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {
-    print('return Exercise_Icon id: $id ');
+    print('return ExerciseIcon id: $id ');
         
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(4.0),
         
         child: Image.asset('packages/exercise_icons/assets/images/ExerciseIcon$id.png'),
       ),

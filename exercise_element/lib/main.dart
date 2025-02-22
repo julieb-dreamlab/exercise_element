@@ -23,6 +23,8 @@ void main()  { //async
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -33,7 +35,7 @@ class MyApp extends StatelessWidget {
         body: ListView.builder(
           itemCount: 3, // Example list of 10 items
           itemBuilder: (context, id) {
-            return Exercise_Icon(id: id);
+            return ExerciseIcon(id: id);
           },
         ),
       ),
