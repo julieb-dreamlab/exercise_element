@@ -19,23 +19,47 @@ void main()  { //async
   // SettingsView.
   // runApp(MyApp(settingsController: settingsController));
 
-  runApp(MyApp());
+  runApp(
+    MyApp(
+      items: List<ListExercises>.generate(
+        4, 
+        (i) =>
+          i % 3 == 0
+            ? HeadingItem('Heading $i')
+            : ExerciseItem(i),
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  
+  final List<ListExercises> items;
+  const MyApp({super.key, required this.items});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Passing ID Example'),
+          title: Text('Generate List'),
         ),
         body: ListView.builder(
-          itemCount: 3, // Example list of 10 items
-          itemBuilder: (context, id) {
-            return ExerciseIcon(id: id);
+          // Let the ListView know how many items to build.
+          itemCount: items.length,
+          // Convert each item into a widget based on the type of item it is.
+          itemBuilder: (context, index) {
+            final item = items[index];
+            print('item index: $index ');
+            if (item is HeadingItem) {
+              return ListTile(
+                title: Text(item.heading, style: Theme.of(context).textTheme.headlineSmall)
+              );
+            } else if (item is ExerciseItem) {
+              return ListTile(
+                title: Exercise(id: item.id,)
+              );
+            }
+            return Container();
           },
         ),
       ),
@@ -43,6 +67,53 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// the base class for listing the exercises
+// defined (eventually) as containing exercise_icon, timer widget, and buttons
+abstract class ListExercises {
+  // The title line
+  Widget buildTitle(BuildContext context);
+
+  // The exercise element
+  Widget buildExerciseElement(BuildContext context);
+
+  // The exercise element
+  Widget buildSubtitle(BuildContext context);
+
+}
+
+/// A ListItem that contains data to display a heading.
+class HeadingItem implements ListExercises {
+  final String heading;
+
+  HeadingItem(this.heading);
+
+  @override
+  Widget buildTitle(BuildContext context) {
+    return Text(heading, style: Theme.of(context).textTheme.headlineSmall);
+  }
+
+  @override
+  Widget buildExerciseElement(BuildContext context) => Text(heading);
+
+  @override
+  Widget buildSubtitle(BuildContext context) => const SizedBox.shrink();
+}
+
+/// A ListItem that contains data to display a message.
+class ExerciseItem implements ListExercises {
+  final int id;
+
+  ExerciseItem(this.id);
+  @override
+  Widget buildTitle(BuildContext context) => const SizedBox.shrink();
+
+  @override
+  Widget buildExerciseElement(BuildContext context){
+    return ExerciseIcon(id: id,);
+  }
+  @override
+  Widget buildSubtitle(BuildContext context) => const SizedBox.shrink();
+}
 // class MyApp extends StatelessWidget {
 //   final int id = 1;
 
