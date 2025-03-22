@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:exercise_icons/exercise_icons.dart';
+import 'package:exercise_element/common/theme.dart';
+import 'package:exercise_element/models/cart.dart';
+import 'package:exercise_element/models/catalog.dart';
+import 'package:exercise_element/screens/home.dart';
+import 'package:exercise_element/screens/cart.dart';
+import 'package:exercise_element/screens/catalog.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 //import 'src/app.dart';
 //import 'src/settings/settings_controller.dart';
 //import 'src/settings/settings_service.dart';
 
 void main()  { //async
+  //   ******** TODO: switch to using SettingsController rather than MultiProvider ChangeNotifier  ********
   // Set up the SettingsController, which will glue user settings to multiple
   // Flutter Widgets.
   // final settingsController = SettingsController(SettingsService());
@@ -18,102 +26,135 @@ void main()  { //async
   // SettingsController for changes, then passes it further down to the
   // SettingsView.
   // runApp(MyApp(settingsController: settingsController));
+  runApp(MyApp());
+}
 
-  runApp(
-    MyApp(
-      items: List<ListExercises>.generate(
-        4, 
-        (i) =>
-          i % 3 == 0
-            ? HeadingItem('Heading $i')
-            : ExerciseItem(i),
+
+GoRouter router() {
+  return GoRouter(
+    initialLocation: '/home',
+    routes: [
+      GoRoute(path: '/home', builder: (context, state) => HomeScreen()),
+      GoRoute(
+        path: '/catalog',
+        builder: (context, state) => const MyCatalog(),
+        routes: [
+          GoRoute(path: 'cart', builder: (context, state) => const MyCart()),
+        ],
       ),
-    ),
+    ],
   );
 }
 
 class MyApp extends StatelessWidget {
-  final List<ListExercises> items;
-  const MyApp({super.key, required this.items});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Generate List'),
-        ),
-        body: ListView.builder(
-          // Let the ListView know how many items to build.
-          itemCount: items.length,
-          // Convert each item into a widget based on the type of item it is.
-          itemBuilder: (context, index) {
-            final item = items[index];
-            print('item index: $index ');
-            if (item is HeadingItem) {
-              return ListTile(
-                title: Text(item.heading, style: Theme.of(context).textTheme.headlineSmall)
-              );
-            } else if (item is ExerciseItem) {
-              return ListTile(
-                title: Exercise(id: item.id,)
-              );
-            }
-            return Container();
+    // Using MultiProvider is convenient when providing multiple objects.
+    return MultiProvider(
+      providers: [
+        // In this sample app, WholeCatalog never changes, so a simple Provider
+        // is sufficient.
+        Provider(create: (context) => WholeCatalog()),
+        // CartModel is implemented as a ChangeNotifier, which calls for the use
+        // of ChangeNotifierProvider. Moreover, CartModel depends
+        // on WholeCatalog, so a ProxyProvider is needed.
+        ChangeNotifierProxyProvider<WholeCatalog, CartModel>(
+          create: (context) => CartModel(),
+          update: (context, catalog, cart) {
+            if (cart == null) throw ArgumentError.notNull('cart');
+            cart.catalog = catalog;
+            return cart;
           },
         ),
-      ),
+      ],
+      child: MyApp(),
     );
   }
 }
+// class MyApp extends StatelessWidget {
+//   final List<ListExercises> items;
+//   const MyApp({super.key, required this.items});
 
-// the base class for listing the exercises
-// defined (eventually) as containing exercise_icon, timer widget, and buttons
-abstract class ListExercises {
-  // The title line
-  Widget buildTitle(BuildContext context);
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: Scaffold(
+//         appBar: AppBar(
+//           title: Text('Generate List'),
+//         ),
+//         body: ListView.builder(
+//           // Let the ListView know how many items to build.
+//           itemCount: items.length,
+//           // Convert each item into a widget based on the type of item it is.
+//           itemBuilder: (context, index) {
+//             final item = items[index];
+//             print('item index: $index ');
+//             if (item is HeadingItem) {
+//               return ListTile(
+//                 title: Text(item.heading, style: Theme.of(context).textTheme.headlineSmall)
+//               );
+//             } else if (item is ExerciseItem) {
+//               return ListTile(
+//                 title: Exercise(id: item.id,)
+//               );
+//             }
+//             return Container();
+//           },
+//         ),
+//       ),
+//     );
+//   }
+// }
 
-  // The exercise element
-  Widget buildExerciseElement(BuildContext context);
+// // the base class for listing the exercises
+// // defined (eventually) as containing exercise_icon, timer widget, and buttons
+// abstract class ListExercises {
+//   // The title line
+//   Widget buildTitle(BuildContext context);
 
-  // The exercise element
-  Widget buildSubtitle(BuildContext context);
+//   // The exercise element
+//   Widget buildExerciseElement(BuildContext context);
 
-}
+//   // The exercise element
+//   Widget buildSubtitle(BuildContext context);
 
-/// A ListItem that contains data to display a heading.
-class HeadingItem implements ListExercises {
-  final String heading;
+// }
 
-  HeadingItem(this.heading);
+// /// A ListItem that contains data to display a heading.
+// class HeadingItem implements ListExercises {
+//   final String heading;
 
-  @override
-  Widget buildTitle(BuildContext context) {
-    return Text(heading, style: Theme.of(context).textTheme.headlineSmall);
-  }
+//   HeadingItem(this.heading);
 
-  @override
-  Widget buildExerciseElement(BuildContext context) => Text(heading);
+//   @override
+//   Widget buildTitle(BuildContext context) {
+//     return Text(heading, style: Theme.of(context).textTheme.headlineSmall);
+//   }
 
-  @override
-  Widget buildSubtitle(BuildContext context) => const SizedBox.shrink();
-}
+//   @override
+//   Widget buildExerciseElement(BuildContext context) => Text(heading);
 
-/// A ListItem that contains data to display a message.
-class ExerciseItem implements ListExercises {
-  final int id;
+//   @override
+//   Widget buildSubtitle(BuildContext context) => const SizedBox.shrink();
+// }
 
-  ExerciseItem(this.id);
-  @override
-  Widget buildTitle(BuildContext context) => const SizedBox.shrink();
+// /// A ListItem that contains data to display a message.
+// class ExerciseItem implements ListExercises {
+//   final int id;
 
-  @override
-  Widget buildExerciseElement(BuildContext context){
-    return ExerciseIcon(id: id,);
-  }
-  @override
-  Widget buildSubtitle(BuildContext context) => const SizedBox.shrink();
-}
+//   ExerciseItem(this.id);
+//   @override
+//   Widget buildTitle(BuildContext context) => const SizedBox.shrink();
+
+//   @override
+//   Widget buildExerciseElement(BuildContext context){
+//     return ExerciseIcon(id: id,);
+//   }
+//   @override
+//   Widget buildSubtitle(BuildContext context) => const SizedBox.shrink();
+// }
 // class MyApp extends StatelessWidget {
 //   final int id = 1;
 
