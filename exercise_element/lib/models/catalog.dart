@@ -14,32 +14,10 @@ import 'package:flutter/material.dart';
 /// For simplicity, the catalog is expected to be immutable (no products are
 /// expected to be added, removed or changed during the execution of the app).
 class WholeCatalog {
-  // static List<String> itemNames = [
-  //   'Code Smell',
-  //   'Control Flow',
-  //   'Interpreter',
-  //   'Recursion',
-  //   'Sprint',
-  //   'Heisenbug',
-  //   'Spaghetti',
-  //   'Hydra Code',
-  //   'Off-By-One',
-  //   'Scope',
-  //   'Callback',
-  //   'Closure',
-  //   'Automata',
-  //   'Bit Shift',
-  //   'Currying',
-  // ];
-  static List<ExerciseItem> exerciseRows = List<ExerciseItem>.generate(
-      4,  // current inventory of exercise assets 
-      (i) => ExerciseItem(i),
-    );
-
   /// Get item by [id].
   ///
   /// Extract and ListExercises from [excersiceRows] which represents all exercise assets.
-  ExerciseItem getById(int id) => exerciseRows[id];
+  ExerciseItem getById(int id) => ExerciseItem(id);
 
   /// Get item by its position in the catalog.
   ExerciseItem getByPosition(int position) {
@@ -107,14 +85,30 @@ class ExerciseItem implements ListExercises {
   final String name = "tmp";
   final Color color = Colors.blueGrey;
 
+  // to reassign the name to the ExerciseText
+
   ExerciseItem(this.id);
   @override
   Widget buildTitle(BuildContext context) => const SizedBox.shrink();
 
   @override
   Widget buildExerciseElement(BuildContext context){
-    return ExerciseIcon(id: id,);
+    Row row = Row(
+      children: <Widget>[Exercise(id: id)],
+    );
+    String name = extractTextFromRow(row);
+    return Exercise(id: id,);
   }
   @override
   Widget buildSubtitle(BuildContext context) => const SizedBox.shrink();
+
+  // Function to extract the text from the Row
+  String extractTextFromRow(Row row) {
+    for (Widget child in row.children) {
+      if (child is Text) {
+        return child.data ?? '';
+      }
+    }
+    return '';
+  }
 }

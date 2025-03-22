@@ -83,17 +83,17 @@ class _CartTotal extends StatelessWidget {
             Consumer<CartModel>(
               builder:
                   (context, cart, child) =>
-                      Text('\$${cart.totalTime}', style: hugeStyle),
+                      Text('${cart.totalTime} seconds in workout', style: hugeStyle),
             ),
             const SizedBox(width: 24),
             FilledButton(
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Buying not supported yet.')),
+                  const SnackBar(content: Text('Timer not supported yet.')),
                 );
               },
               style: TextButton.styleFrom(foregroundColor: Colors.white),
-              child: const Text('BUY'),
+              child: const Text('START WORKOUT'),
             ),
           ],
         ),

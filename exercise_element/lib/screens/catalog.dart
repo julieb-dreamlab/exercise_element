@@ -4,6 +4,7 @@
 
 import 'package:exercise_element/models/cart.dart';
 import 'package:exercise_element/models/catalog.dart';
+import 'package:exercise_icons/exercise_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +22,7 @@ class MyCatalog extends StatelessWidget {
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) => _MyListItem(index),
+              childCount: 4, // number of assets to display!!!!!!
             ),
           ),
         ],
@@ -105,20 +107,9 @@ class _MyListItem extends StatelessWidget {
     );
     var textTheme = Theme.of(context).textTheme.titleLarge;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: LimitedBox(
-        maxHeight: 48,
-        child: Row(
-          children: [
-            AspectRatio(aspectRatio: 1, child: Container(color: item.color)),
-            const SizedBox(width: 24),
-            Expanded(child: Text(item.name, style: textTheme)),
-            const SizedBox(width: 24),
-            _AddButton(item: item),
-          ],
-        ),
-      ),
+    return ListTile(
+      title: Exercise(id: item.id,),
+      trailing: _AddButton(item: item),
     );
   }
 }
