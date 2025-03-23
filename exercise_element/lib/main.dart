@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 //import 'src/settings/settings_controller.dart';
 //import 'src/settings/settings_service.dart';
 
-void main()  { //async
+void main() async  { 
   //   ******** TODO: switch to using SettingsController rather than MultiProvider ChangeNotifier  ********
   // Set up the SettingsController, which will glue user settings to multiple
   // Flutter Widgets.
@@ -26,6 +26,12 @@ void main()  { //async
   // SettingsController for changes, then passes it further down to the
   // SettingsView.
   // runApp(MyApp(settingsController: settingsController));
+
+  // WidgetsFlutterBinding.ensureInitialized ensures that the Flutter framework is fully initialized before you proceed
+  // with any other code that relies on Flutter's engine or services.
+  // This is particularly important when you need to use platform channels, interact with native code,
+  // or perform certain operations before the runApp() method is called.
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 

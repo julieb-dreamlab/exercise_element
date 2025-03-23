@@ -79,6 +79,7 @@ class HeadingItem implements ListExercises {
 }
 
 /// A ListItem that contains data to display a message.
+@immutable
 class ExerciseItem implements ListExercises {
   final int id;
   final int seconds = 30;
@@ -97,18 +98,26 @@ class ExerciseItem implements ListExercises {
       children: <Widget>[Exercise(id: id)],
     );
     String name = extractTextFromRow(row);
+    print('extracted $name');
     return Exercise(id: id,);
   }
+  
   @override
   Widget buildSubtitle(BuildContext context) => const SizedBox.shrink();
 
   // Function to extract the text from the Row
   String extractTextFromRow(Row row) {
     for (Widget child in row.children) {
-      if (child is Text) {
-        return child.data ?? '';
+      print('row child: $child');
+      if (child is ExerciseName) {
+        return child.xd.name ?? '';
       }
     }
     return '';
   }
+  @override
+  int get hashCode => id;
+
+  @override
+  bool operator ==(Object other) => other is ExerciseItem && other.id == id;
 }
