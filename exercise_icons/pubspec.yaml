@@ -1,7 +1,7 @@
 name: exercise_icons
 description: "A set of icons for each exercise."
 version: 0.0.1
-homepage:
+homepage: "asset package"
 
 environment:
   sdk: ^3.6.2
@@ -24,6 +24,8 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
+    - assets/ExerciseNames_en.json
+    - assets/ExerciseNames_fr.json
     - assets/images/ExerciseIcon0.png
     - assets/images/ExerciseIcon1.png
     - assets/images/ExerciseIcon2.png
