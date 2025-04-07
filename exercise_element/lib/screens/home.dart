@@ -1,5 +1,5 @@
-import 'package:exercise_element/models/cart.dart';
-import 'package:exercise_element/models/catalog.dart';
+import 'package:exercise_element/view_models/cart.dart';
+import 'package:exercise_element/view_models/catalog.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';

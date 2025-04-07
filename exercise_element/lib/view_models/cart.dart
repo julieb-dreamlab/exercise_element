@@ -3,7 +3,9 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
-import 'package:exercise_element/models/catalog.dart';
+import 'package:exercise_element/view_models/catalog.dart';
+import '../models/exercise.dart';
+import '../repositories/exercise_repository_local.dart';
 
 class CartModel extends ChangeNotifier {
   /// The private field backing [catalog].
@@ -24,21 +26,21 @@ class CartModel extends ChangeNotifier {
   }
 
   /// List of items in the cart.
-  List<ExerciseItem> get items => _itemIds.map((id) => _catalog.getById(id)).toList();
+  List<Exercise> get items => _itemIds.map((id) => _catalog.getById(id)).toList();
 
   /// The current total time to perform all exercises.
   int get totalTime =>
       items.fold(0, (total, current) => total + current.seconds);
 
   /// Adds [item] to cart. This is the only way to modify the cart from outside.
-  void add(ExerciseItem item) {
+  void add(Exercise item) {
     _itemIds.add(item.id);
     // This line tells [Model] that it should rebuild the widgets that
     // depend on it.
     notifyListeners();
   }
 
-  void remove(ExerciseItem item) {
+  void remove(Exercise item) {
     _itemIds.remove(item.id);
     // Don't forget to tell dependent widgets to rebuild _every time_
     // you change the model.

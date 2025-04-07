@@ -1,10 +1,12 @@
 /// WholeCatalog ViewModel, derived from provider-shopper examples and
 /// the Compass App architecture case study
 import 'package:flutter/foundation.dart';
+import 'package:provider/provider.dart';
 
 import '../utils/command.dart';
 import '../utils/result.dart';
-import '../repositories/exerercise_items.dart';
+import '../models/exercise.dart';
+import '../repositories/exercise_repository_local.dart';
 /// Whole Catalog ViewModel
 ///  
 /// The catalog is expected to be immutable (no items are
@@ -13,27 +15,31 @@ import '../repositories/exerercise_items.dart';
 ///
 /// TODO: add logging
 /// TODO: add catalogs by category( all, floor, standing)
-class WholeCatalog extends ChangeNotifier {
+class WholeCatalog extends ChangeNotifier{
+  final ExerciseRepositoryLocal exerciseRepository;
   WholeCatalog({
-    required ExerciseRepository exerciseRepository;
+    required this.exerciseRepository, Key? key
   }): _exerciseRepository = exerciseRepository {
     load = Command0(_load)..execute();
-  };
+  }
 
-  final ExerciseRepository _exerciseRepository;
+  final ExerciseRepositoryLocal _exerciseRepository;
 
-  List<ExerciseItem> _exerciseItems = [];
+  List<Exercise> _exercises = [];
 
-  late Command0 load;
+  late final Command0 load;
 
-  UnmodifiableListView<ExerciseItem> get exercises => UnmodifiableListView(_exerciseItems);
+  List<Exercise> get exercises => _exercises;
+
+  int get length => _exercises.length;
+
   /// Get item by [id].
   ///
-  /// Extract and List Exercises from [excersiceRows] which represents all exercise assets.
-  ExerciseItem getById(int id) => ExerciseItem(id);
+  /// Extract and List Exercises from [excersices] which represents all exercise assets.
+  Exercise getById(int id) => exercises[id];
 
   /// Get item by its position in the catalog.
-  ExerciseItem getByPosition(int position) {
+  Exercise getByPosition(int position) {
     // In this simplified case, an item's position in the catalog
     // is also its id.
     return getById(position);
@@ -44,10 +50,10 @@ class WholeCatalog extends ChangeNotifier {
     try {
       final result = await _exerciseRepository.getExercisesList();
       switch (result) {
-        case Ok<List<ExerciseItem>>():
-          _exerciseItems = result.value;
+        case Ok<List<Exercise>>():
+          _exercises = result.value;
           // _log.fine('Loaded bookings');
-        case Error<List<ExerciseItem>>():
+        case Error<List<Exercise>>():
           // _log.warning('Failed to load bookings', result.error);
           return result;
       }

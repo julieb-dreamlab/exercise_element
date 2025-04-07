@@ -1,13 +1,15 @@
+import 'package:exercise_element/services/local_data_service.dart';
 import 'package:flutter/material.dart';
-import 'package:exercise_icons/exercise_icons.dart';
 import 'package:exercise_element/common/theme.dart';
-import 'package:exercise_element/models/cart.dart';
-import 'package:exercise_element/models/catalog.dart';
+import 'package:exercise_element/view_models/cart.dart';
+import 'package:exercise_element/view_models/catalog.dart';
 import 'package:exercise_element/screens/home.dart';
 import 'package:exercise_element/screens/cart.dart';
 import 'package:exercise_element/screens/catalog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'repositories/exercise_repository_local.dart';
+
 //import 'src/app.dart';
 //import 'src/settings/settings_controller.dart';
 //import 'src/settings/settings_service.dart';
@@ -58,11 +60,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Using MultiProvider is convenient when providing multiple objects.
+    final LocalDataService localDataService = LocalDataService();
+    final ExerciseRepositoryLocal exerciseRepository = ExerciseRepositoryLocal(localDataService: localDataService);
+
     return MultiProvider(
       providers: [
-        // In this sample app, WholeCatalog never changes, so a simple Provider
-        // is sufficient.
-        Provider(create: (context) => WholeCatalog()),
+        // 
+        ChangeNotifierProvider<WholeCatalog>(create: (context) => WholeCatalog(exerciseRepository: exerciseRepository)),
         // CartModel is implemented as a ChangeNotifier, which calls for the use
         // of ChangeNotifierProvider. Moreover, CartModel depends
         // on WholeCatalog, so a ProxyProvider is needed.

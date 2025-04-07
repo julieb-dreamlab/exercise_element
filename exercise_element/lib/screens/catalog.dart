@@ -2,12 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:exercise_element/models/cart.dart';
-import 'package:exercise_element/models/catalog.dart';
-import 'package:exercise_icons/exercise_icons.dart';
+import 'package:exercise_element/view_models/cart.dart';
+import 'package:exercise_element/view_models/catalog.dart';
+// import 'package:exercise_icons/exercise_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../models/exercise.dart';
 
 class MyCatalog extends StatelessWidget {
   const MyCatalog({super.key});
@@ -32,7 +33,7 @@ class MyCatalog extends StatelessWidget {
 }
 
 class _AddButton extends StatelessWidget {
-  final ExerciseItem item;
+  final Exercise item;
 
   const _AddButton({required this.item});
 
@@ -100,16 +101,23 @@ class _MyListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var item = context.select<WholeCatalog, ExerciseItem>(
-      // Here, we are only interested in the item at [index]. We don't care
-      // about any other change.
-      (catalog) => catalog.getByPosition(index),
-    );
-    var textTheme = Theme.of(context).textTheme.titleLarge;
+    return Consumer<WholeCatalog>(
+      builder: (context, catalog, child) {
+        if (index < 0 || index >= catalog.length) {
+          return ListTile(
+            title: Text('Invalid item'),
+            trailing: Icon(Icons.error),
+          );
+        }
 
-    return ListTile(
-      title: Exercise(id: item.id,),
-      trailing: _AddButton(item: item),
+        var item = catalog.getByPosition(index);
+        var textTheme = Theme.of(context).textTheme.titleLarge;
+
+        return ListTile(
+          title: Text(item.name, style: textTheme),
+          trailing: _AddButton(item: item),
+        );
+      },
     );
   }
 }
