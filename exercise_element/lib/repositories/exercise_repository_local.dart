@@ -44,25 +44,31 @@ class ExerciseRepositoryLocal implements ExerciseRepository {
   Future<Result<List<Exercise>>> getExercisesList() async {
     // Initialize the repository with a default exercise
     if (!_isInitialized) {
-      await _createDefaultExercise();
+      await _createExercises();
       _isInitialized = true;
     }
 
-    return Result.ok(_createExercises());
+    return Result.ok(_exercises);
   }
 
-  List<Exercise> _createExercises() {
-    return _exercises
-        .map(
-          (exercise) => Exercise(
-            id: exercise.id!,
-            name: exercise.name, 
-            icon: exercise.icon,
-            text: exercise.text,
-            seconds: exercise.seconds
-          ),
+  Future<void> _createExercises() async {
+    // Read the json list of names and use length to create 
+    // the list of Exercises
+    final names = (await _localDataService.getNames());
+    final seconds = 30;
+    final id = List<int>.generate(names.length, (index) => index);
+    // Build up catalog
+    for (int i = 0; i < id.length; i++) {
+      _exercises.add(
+        Exercise(
+          id: _sequentialId++,
+          name: (await _localDataService.getNameByRef(i)).first,
+          icon: (await _localDataService.getIconByRef(i)).first,
+          text: (await _localDataService.getTextByRef(i)).first,
+          seconds: seconds,
         )
-        .toList();
+      );
+    };
   }
 
   Future<void> _createDefaultExercise() async {
